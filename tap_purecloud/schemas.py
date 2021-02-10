@@ -128,16 +128,16 @@ location = {
 segment = {
     'type': 'object',
     'properties': {
-        'session_id': {
+        'sourceSessionId': {
             'type': 'string',
             'description': 'id for the session',
         },
-        'segment_start': {
+        'segmentStart': {
             'type': ['string', 'null'],
             'format': 'date-time',
             'description': 'start datetime for the segment',
         },
-        'segment_end': {
+        'segmentEnd': {
             'type': ['string', 'null'],
             'format': 'date-time',
             'description': 'end datetime for the segment',
@@ -149,7 +149,7 @@ segment = {
 session = {
     'type': 'object',
     'properties': {
-        'session_id': {
+        'sessionId': {
             'type': 'string',
             'description': 'id for the session',
         },
