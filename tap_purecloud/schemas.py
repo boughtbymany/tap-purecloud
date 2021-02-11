@@ -128,8 +128,12 @@ location = {
 segment = {
     'type': 'object',
     'properties': {
-        'sourceSessionId': {
-            'type': 'string',
+        'queue_id': {
+            'type': ['string', 'null'],
+            'description': 'id for the queue',
+        },
+        'source_session_id': {
+            'type': ['string', 'null'],
             'description': 'id for the session',
         },
         'segmentStart': {
@@ -149,7 +153,7 @@ segment = {
 session = {
     'type': 'object',
     'properties': {
-        'sessionId': {
+        'session_id': {
             'type': 'string',
             'description': 'id for the session',
         },
