@@ -164,7 +164,7 @@ metrics = {
         },
         'value': {
             'type': 'number'
-        }
+        },
         'emit_date': {
             'type': ['string', 'null'],
             'format': 'date-time'
@@ -195,7 +195,7 @@ session = {
         'dnis': {
             'type': 'string',
             'description': 'DNIS'
-        }
+        },
         'outbound_campaign_id': {
             'type': ['string', 'null'],
             'description': 'Outbound campaign id',
