@@ -136,15 +136,38 @@ segment = {
             'type': ['string', 'null'],
             'description': 'id for the session',
         },
-        'segmentStart': {
+        'segment_start': {
             'type': ['string', 'null'],
             'format': 'date-time',
             'description': 'start datetime for the segment',
         },
-        'segmentEnd': {
+        'segment_end': {
             'type': ['string', 'null'],
             'format': 'date-time',
             'description': 'end datetime for the segment',
+        },
+        'wrap_up_code': {
+            'type': ['string', 'null'],
+        },
+        'segment_type': {
+            'type': ['string', 'null']
+        }
+    }
+}
+
+metrics = {
+    'type': 'object',
+    'properties': {
+        'name': {
+            'type': 'string',
+            'description': 'Metrics name'
+        },
+        'value': {
+            'type': 'number'
+        }
+        'emit_date': {
+            'type': ['string', 'null'],
+            'format': 'date-time'
         }
     }
 }
@@ -157,7 +180,35 @@ session = {
             'type': 'string',
             'description': 'id for the session',
         },
+        'media_type': {
+            'type': 'string',
+            'description': 'Media type name'
+        },
+        'ani': {
+            'type': ['string', 'null'],
+            'description': 'ANI'
+        },
+        'direction': {
+            'type': 'string',
+            'description': 'Direction'
+        },
+        'dnis': {
+            'type': 'string',
+            'description': 'DNIS'
+        }
+        'outbound_campaign_id': {
+            'type': ['string', 'null'],
+            'description': 'Outbound campaign id',
+        },
+        'outbound_contact_id': {
+            'type': ['string', 'null'],
+            'description': 'Outbound contact id',
+        },
         'segments': {
+            'type': ['array', 'null'],
+            'items': segment
+        },
+        'metrics': {
             'type': ['array', 'null'],
             'items': segment
         }
@@ -424,5 +475,37 @@ queue_wrapup = {
             'type': 'string',
             'name': 'id for the wrapup code in this queue',
         },
+    }
+}
+
+division = {
+    'type': 'object',
+    'properties': {
+        'id': {
+            'type': 'string',
+            'name': 'id of the division'
+        },
+        'name': {
+            'type': 'string'
+        },
+        'self_uri': {
+            'type': ['string', 'null']
+        }
+    }
+}
+
+campaign = {
+    'type': 'object',
+    'properties': {
+        'id': {
+            'type': 'string'
+        },
+        'name': {
+            'type': 'string'
+        },
+        'division': {
+            'type': 'object',
+            'properties': division
+        }
     }
 }
