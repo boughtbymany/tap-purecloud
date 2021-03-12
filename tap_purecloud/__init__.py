@@ -168,7 +168,7 @@ def parse_dates(record):
 
 
 def handle_object(obj):
-    return parse_dates(obj.to_dict())
+    return parse_dates(obj).to_dict()
 
 
 def stream_results(generator, transform_record, record_name, schema, primary_key, write_schema):

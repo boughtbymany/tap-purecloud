@@ -11,7 +11,7 @@ setup(name='tap-purecloud',
       classifiers=['Programming Language :: Python :: 3 :: Only'],
       py_modules=['tap_purecloud'],
       install_requires=[
-          'singer-python==5.0.12',
+          'singer-python==5.12.0',
           'backoff==1.3.2',
           'requests==2.20.0',
           'python-dateutil==2.6.0',
