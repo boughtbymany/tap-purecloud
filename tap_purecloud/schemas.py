@@ -148,9 +148,11 @@ segment = {
         },
         'wrap_up_code': {
             'type': ['string', 'null'],
+            'description': 'wrap up code'
         },
         'segment_type': {
-            'type': ['string', 'null']
+            'type': ['string', 'null'],
+            'description': 'segment type'
         }
     }
 }
@@ -163,11 +165,13 @@ metrics = {
             'description': 'Metrics name'
         },
         'value': {
-            'type': 'number'
+            'type': 'number',
+            'description': 'metric value'
         },
         'emit_date': {
             'type': ['string', 'null'],
-            'format': 'date-time'
+            'format': 'date-time',
+            'description': 'metric emit date'
         }
     }
 }
@@ -181,19 +185,19 @@ session = {
             'description': 'id for the session',
         },
         'media_type': {
-            'type': 'string',
-            'description': 'Media type name'
+            'type': ['string', 'null'],
+            'description': 'media type name'
         },
         'ani': {
             'type': ['string', 'null'],
-            'description': 'ANI'
+            'description': 'ani value'
         },
         'direction': {
-            'type': 'string',
-            'description': 'Direction'
+            'type': ['string', 'null'],
+            'description': 'direction'
         },
         'dnis': {
-            'type': 'string',
+            'type': ['string', 'null'],
             'description': 'DNIS'
         },
         'outbound_campaign_id': {
@@ -210,7 +214,7 @@ session = {
         },
         'metrics': {
             'type': ['array', 'null'],
-            'items': segment
+            'items': metrics
         }
     }
 }
@@ -486,10 +490,12 @@ division = {
             'name': 'id of the division'
         },
         'name': {
-            'type': 'string'
+            'type': ['string', 'null'],
+            'description': 'division name'
         },
         'self_uri': {
-            'type': ['string', 'null']
+            'type': ['string', 'null'],
+            'description': 'self url'
         }
     }
 }
@@ -498,10 +504,12 @@ campaign = {
     'type': 'object',
     'properties': {
         'id': {
-            'type': 'string'
+            'type': 'string',
+            'description': 'campaign id'
         },
         'name': {
-            'type': 'string'
+            'type': ['string', 'null'],
+            'description': 'campaign name'
         },
         'division': {
             'type': 'object',
