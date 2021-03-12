@@ -231,6 +231,10 @@ participant = {
             'type': ['string', 'null'],
             'description': 'name for the participant',
         },
+        "purpose": {
+            'type': ['string', 'null'],
+            'description': 'participant purpose'
+        },
         'sessions': {
             'type': ['array', 'null'],
             'items': session
