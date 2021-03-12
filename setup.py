@@ -12,11 +12,8 @@ setup(name='tap-purecloud',
       py_modules=['tap_purecloud'],
       install_requires=[
           'singer-python==5.12.0',
-          'backoff==1.3.2',
-          'requests==2.20.0',
-          'python-dateutil==2.6.0',
-          'PureCloudPlatformClientV2==111.0.0',
-          'websockets==5.0.1'
+          'python-dateutil==2.8.1',
+          'PureCloudPlatformClientV2==111.0.0'
       ],
       entry_points='''
           [console_scripts]
