@@ -12,9 +12,8 @@ import backoff
 import hashlib
 import collections
 
-import PureCloudPlatformApiSdk
 import PureCloudPlatformClientV2
-from PureCloudPlatformApiSdk.rest import ApiException
+from PureCloudPlatformClientV2.rest import ApiException
 
 import tap_purecloud.schemas as schemas
 import tap_purecloud.websocket_helper
@@ -83,7 +82,7 @@ class FakeBody(object):
 
 
 @backoff.on_exception(backoff.constant,
-                      PureCloudPlatformApiSdk.rest.ApiException,
+                      PureCloudPlatformClientV2.rest.ApiException,
                       jitter=backoff.random_jitter,
                       max_tries=API_RETRY_COUNT,
                       giveup=giveup,
@@ -198,7 +197,8 @@ def stream_results_list(generator, transform_record, record_name, schema, primar
 
 def sync_users(config):
     logger.info("Fetching users")
-    api_instance = PureCloudPlatformApiSdk.UsersApi()
+    # api_instance = PureCloudPlatformApiSdk.UsersApi()
+    api_instance = PureCloudPlatformClientV2.UsersApi()
     body = FakeBody()
     gen_users = fetch_all_records(api_instance.get_users, 'entities', body, {'expand': ['locations']})
     stream_results(gen_users, handle_object, 'users', schemas.user, ['id'], True)
@@ -206,7 +206,8 @@ def sync_users(config):
 
 def sync_groups(config):
     logger.info("Fetching groups")
-    api_instance = PureCloudPlatformApiSdk.GroupsApi()
+    # api_instance = PureCloudPlatformApiSdk.GroupsApi()
+    api_instance = PureCloudPlatformClientV2.GroupsApi()
     body = FakeBody()
     gen_groups = fetch_all_records(api_instance.get_groups, 'entities', body)
     stream_results(gen_groups, handle_object, 'groups', schemas.group, ['id'], True)
@@ -214,15 +215,19 @@ def sync_groups(config):
 
 def sync_locations(config):
     logger.info("Fetching locations")
-    api_instance = PureCloudPlatformApiSdk.LocationsApi()
-    body = PureCloudPlatformApiSdk.LocationSearchRequest()
-    gen_locations = fetch_all_records(api_instance.post_search, 'results', body)
+    # api_instance = PureCloudPlatformApiSdk.LocationsApi()
+    api_instance = PureCloudPlatformClientV2.LocationsApi()
+    # body = PureCloudPlatformApiSdk.LocationSearchRequest()
+    body = PureCloudPlatformClientV2.LocationSearchRequest()
+    # gen_locations = fetch_all_records(api_instance.post_search, 'results', body)
+    gen_locations = fetch_all_records(api_instance.post_locations_search, 'results', body)
     stream_results(gen_locations, handle_object, 'location', schemas.location, ['id'], True)
 
 
 def sync_presence_definitions(config):
     logger.info("Fetching presence definitions")
-    api_instance = PureCloudPlatformApiSdk.PresenceApi()
+    # api_instance = PureCloudPlatformApiSdk.PresenceApi()
+    api_instance = PureCloudPlatformClientV2.PresenceApi()
     body = FakeBody()
     gen_presences = fetch_all_records(api_instance.get_presencedefinitions, 'entities', body)
     stream_results(gen_presences, handle_object, 'presence', schemas.presence, ['id'], True)
@@ -230,9 +235,11 @@ def sync_presence_definitions(config):
 
 def sync_queues(config):
     logger.info("Fetching queues")
-    api_instance = PureCloudPlatformApiSdk.RoutingApi()
+    # api_instance = PureCloudPlatformApiSdk.RoutingApi()
+    api_instance = PureCloudPlatformClientV2.RoutingApi()
     body = FakeBody()
-    gen_queues = fetch_all_records(api_instance.get_queues, 'entities', body)
+    # gen_queues = fetch_all_records(api_instance.get_queues, 'entities', body)
+    gen_queues = fetch_all_records(api_instance.get_routing_queues, 'entities', body)
 
     queues = stream_results(gen_queues, handle_object, 'queues', schemas.queue, ['id'], True)
 
@@ -240,12 +247,14 @@ def sync_queues(config):
         first_page = (i == 0)
         queue_id = queue['id']
 
-        getter = lambda *args, **kwargs: api_instance.get_queues_queue_id_users(queue_id)
+        # getter = lambda *args, **kwargs: api_instance.get_queues_queue_id_users(queue_id)
+        getter = lambda *args, **kwargs: api_instance.get_routing_queue_members(queue_id)
         gen_queue_membership = fetch_all_records(getter, 'entities', FakeBody())
         stream_results(gen_queue_membership, handle_queue_user_membership(queue_id), 'queue_membership',
                        schemas.queue_membership, ['id'], first_page)
 
-        getter = lambda *args, **kwargs: api_instance.get_queues_queue_id_wrapupcodes(queue_id)
+        # getter = lambda *args, **kwargs: api_instance.get_queues_queue_id_wrapupcodes(queue_id)
+        getter = lambda *args, **kwargs: api_instance.get_routing_queue_wrapupcodes(queue_id)
         gen_queue_wrapup_codes = fetch_all_records(getter, 'entities', FakeBody())
         stream_results(gen_queue_wrapup_codes, handle_queue_wrapup_code(queue_id), 'queue_wrapup_code',
                        schemas.queue_wrapup, ['id'], first_page)
@@ -325,7 +334,8 @@ def handle_schedule(start_date):
 
 def sync_user_schedules(config, unit_id, user_ids, first_page):
     logger.info("Fetching user schedules")
-    api_instance = PureCloudPlatformApiSdk.WorkforceManagementApi()
+    # api_instance = PureCloudPlatformApiSdk.WorkforceManagementApi()
+    api_instance = PureCloudPlatformClientV2.WorkforceManagementApi()
 
     sync_date = config['start_date']
     lookahead_weeks = config.get('schedule_lookahead_weeks', DEFAULT_SCHEDULE_LOOKAHEAD_WEEKS)
@@ -339,12 +349,15 @@ def sync_user_schedules(config, unit_id, user_ids, first_page):
         start_date_s = sync_date.strftime('%Y-%m-%dT00:00:00.000Z')
         end_date_s = next_date.strftime('%Y-%m-%dT00:00:00.000Z')
 
-        body = PureCloudPlatformApiSdk.UserListScheduleRequestBody()
+        # body = PureCloudPlatformApiSdk.UserListScheduleRequestBody()
+        body = PureCloudPlatformClientV2.UserListScheduleRequestBody()
         body.user_ids = user_ids
         body.start_date = start_date_s
         body.end_date = end_date_s
 
-        getter = lambda *args, **kwargs: api_instance.post_managementunits_mu_id_schedules_search(unit_id, body=body)
+        # getter = lambda *args, **kwargs: api_instance.post_managementunits_mu_id_schedules_search(unit_id, body=body)
+        getter = lambda *args, **kwargs: api_instance.post_workforcemanagement_managementunit_schedules_search(
+            unit_id, body=body)
         gen_schedules = fetch_all_analytics_records(getter, body, 'user_schedules', max_pages=1)
 
         stream_results(gen_schedules, handle_schedule(start_date_s), 'user_schedule', schemas.user_schedule,
@@ -425,7 +438,8 @@ def sync_historical_adherence(config, unit_id, users, first_page):
 
 def sync_management_units(config):
     logger.info("Fetching management units")
-    api_instance = PureCloudPlatformApiSdk.WorkforceManagementApi()
+    # api_instance = PureCloudPlatformApiSdk.WorkforceManagementApi()
+    api_instance = PureCloudPlatformClientV2.WorkforceManagementApi()
     body = FakeBody()
     getter = get_wfm_units_for_broken_sdk(api_instance)
     gen_units = fetch_all_records(getter, 'entities', body)
@@ -439,13 +453,15 @@ def sync_management_units(config):
         unit_id = unit['id']
 
         # don't allow args here
-        getter = lambda *args, **kwargs: api_instance.get_managementunits_mu_id_activitycodes(unit_id)
+        # getter = lambda *args, **kwargs: api_instance.get_managementunits_mu_id_activitycodes(unit_id)
+        getter = lambda *args, **kwargs: api_instance.get_workforcemanagement_managementunit_activitycodes(unit_id)
         gen_activitycodes = fetch_all_records(getter, 'activity_codes', FakeBody(), max_pages=1)
         stream_results(gen_activitycodes, handle_activity_codes(unit_id), 'activity_code', schemas.activity_code,
                        ['id', 'management_unit_id'], first_page)
 
         # don't allow args here
-        getter = lambda *args, **kwargs: api_instance.get_managementunits_mu_id_users(unit_id)
+        # getter = lambda *args, **kwargs: api_instance.get_managementunits_mu_id_users(unit_id)
+        getter = lambda *args, **kwargs: api_instance.get_workforcemanagement_managementunit_users(unit_id)
         gen_users = fetch_all_records(getter, 'entities', FakeBody(), max_pages=1)
         users = stream_results(gen_users, handle_mgmt_users(unit_id), 'management_unit_users',
                                schemas.management_unit_users, ['user_id', 'management_unit_id'], first_page)
@@ -590,7 +606,8 @@ def sync_user_details(config):
             next_date.strftime('%Y-%m-%dT00:00:00.000Z')
         )
 
-        body = PureCloudPlatformApiSdk.UserDetailsQuery()
+        # body = PureCloudPlatformApiSdk.UserDetailsQuery()
+        body = PureCloudPlatformClientV2.UserDetailsQuery()
         body.interval = interval
         body.order = "asc"
 
@@ -684,8 +701,8 @@ def do_sync(args):
     access_token = get_access_token(config)
 
     api_host = 'https://api.{domain}'.format(domain=config['domain'])
-    PureCloudPlatformApiSdk.configuration.host = api_host
-    PureCloudPlatformApiSdk.configuration.access_token = access_token
+    # PureCloudPlatformApiSdk.configuration.host = api_host
+    # PureCloudPlatformApiSdk.configuration.access_token = access_token
 
     PureCloudPlatformClientV2.configuration.host = api_host
     PureCloudPlatformClientV2.configuration.access_token = access_token
