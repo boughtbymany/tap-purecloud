@@ -270,6 +270,9 @@ conversation = {
         },
         'division_ids': {
             'type': ['array', 'null'],
+            'items': {
+                'type': ["null", "string"]
+            },
             'description': 'division ids'
         },
         'participants': {
