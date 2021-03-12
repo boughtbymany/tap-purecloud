@@ -20,7 +20,6 @@ import tap_purecloud.schemas as schemas
 import tap_purecloud.websocket_helper
 import time
 
-
 logger = singer.get_logger()
 
 HTTP_SUCCESS = 200
@@ -84,12 +83,11 @@ class FakeBody(object):
 
 
 @backoff.on_exception(backoff.constant,
-                      (PureCloudPlatformApiSdk.rest.ApiException),
+                      PureCloudPlatformApiSdk.rest.ApiException,
                       jitter=backoff.random_jitter,
                       max_tries=API_RETRY_COUNT,
                       giveup=giveup,
                       interval=API_RETRY_INTERVAL_SECONDS)
-
 def fetch_one_page(get_records, body, entity_name, api_function_params):
     if isinstance(body, FakeBody):
         logger.info("Fetching {} records from page {}".format(body.page_size, body.page_number))
@@ -163,7 +161,7 @@ def fetch_all_analytics_records(get_records, body, entity_name, max_pages=None):
 
 def parse_dates(record):
     parsed = record.copy()
-    for (k,v) in record.items():
+    for (k, v) in record.items():
         if isinstance(v, datetime.datetime):
             parsed[k] = v.isoformat()
     return parsed
@@ -179,7 +177,7 @@ def stream_results(generator, transform_record, record_name, schema, primary_key
         singer.write_schema(record_name, schema, primary_key)
     for page in generator:
         if isinstance(page, dict):
-            records = [transform_record(k, v) for (k,v) in page.items()]
+            records = [transform_record(k, v) for (k, v) in page.items()]
         else:
             records = [transform_record(record) for record in page]
         valid_records = [r for r in records if r is not None]
@@ -244,18 +242,20 @@ def sync_queues(config):
 
         getter = lambda *args, **kwargs: api_instance.get_queues_queue_id_users(queue_id)
         gen_queue_membership = fetch_all_records(getter, 'entities', FakeBody())
-        stream_results(gen_queue_membership, handle_queue_user_membership(queue_id), 'queue_membership', schemas.queue_membership, ['id'], first_page)
+        stream_results(gen_queue_membership, handle_queue_user_membership(queue_id), 'queue_membership',
+                       schemas.queue_membership, ['id'], first_page)
 
         getter = lambda *args, **kwargs: api_instance.get_queues_queue_id_wrapupcodes(queue_id)
         gen_queue_wrapup_codes = fetch_all_records(getter, 'entities', FakeBody())
-        stream_results(gen_queue_wrapup_codes, handle_queue_wrapup_code(queue_id), 'queue_wrapup_code', schemas.queue_wrapup, ['id'], first_page)
-
+        stream_results(gen_queue_wrapup_codes, handle_queue_wrapup_code(queue_id), 'queue_wrapup_code',
+                       schemas.queue_wrapup, ['id'], first_page)
 
 
 def get_wfm_units_for_broken_sdk(api_instance):
     def wrap(*args, **kwargs):
         _ = api_instance.get_managementunits(*args, **kwargs)
         return json.loads(api_instance.api_client.last_response.data)
+
     return wrap
 
 
@@ -265,6 +265,7 @@ def handle_activity_codes(unit_id):
         activity_code['id'] = activity_code_id
         activity_code['management_unit_id'] = unit_id
         return activity_code
+
     return wrap
 
 
@@ -274,7 +275,9 @@ def handle_mgmt_users(unit_id):
             'user_id': user.id,
             'management_unit_id': unit_id,
         }
+
     return wrap
+
 
 def handle_queue_user_membership(queue_id):
     def wrap(queue_membership):
@@ -285,7 +288,9 @@ def handle_queue_user_membership(queue_id):
         membership_info['queue_id'] = queue_id
 
         return membership_info
+
     return wrap
+
 
 def handle_queue_wrapup_code(queue_id):
     def wrap(queue_wrapup_code):
@@ -293,7 +298,9 @@ def handle_queue_wrapup_code(queue_id):
         wrapup_code['queue_id'] = queue_id
 
         return wrapup_code
+
     return wrap
+
 
 def handle_schedule(start_date):
     def wrap(user_id, user_record):
@@ -314,6 +321,7 @@ def handle_schedule(start_date):
         return schedule
 
     return wrap
+
 
 def sync_user_schedules(config, unit_id, user_ids, first_page):
     logger.info("Fetching user schedules")
@@ -339,7 +347,8 @@ def sync_user_schedules(config, unit_id, user_ids, first_page):
         getter = lambda *args, **kwargs: api_instance.post_managementunits_mu_id_schedules_search(unit_id, body=body)
         gen_schedules = fetch_all_analytics_records(getter, body, 'user_schedules', max_pages=1)
 
-        stream_results(gen_schedules, handle_schedule(start_date_s), 'user_schedule', schemas.user_schedule, ['start_date', 'user_id'], first_page)
+        stream_results(gen_schedules, handle_schedule(start_date_s), 'user_schedule', schemas.user_schedule,
+                       ['start_date', 'user_id'], first_page)
 
         sync_date = next_date
         first_page = False
@@ -357,7 +366,7 @@ def sync_wfm_historical_adherence(config, unit_id, users, body):
     logger.info("POSTING adherence request")
     api_instance = PureCloudPlatformClientV2.WorkforceManagementApi()
     wfm_response = api_instance.post_workforcemanagement_managementunit_historicaladherencequery(
-            unit_id, body=body)
+        unit_id, body=body)
 
     logger.info("Waiting for notification")
     wfm_notifcation_thread.join()
@@ -371,7 +380,9 @@ def handle_adherence(unit_id):
     def handle(record):
         record['management_unit_id'] = unit_id
         return parse_dates(record)
+
     return handle
+
 
 def get_user_unit_mapping(users):
     unit_users = collections.defaultdict(list)
@@ -383,7 +394,6 @@ def get_user_unit_mapping(users):
 
 
 def sync_historical_adherence(config, unit_id, users, first_page):
-
     sync_date = config['start_date']
 
     end_date = datetime.date.today()
@@ -406,10 +416,12 @@ def sync_historical_adherence(config, unit_id, users, first_page):
         body.time_zone = "UTC"
 
         gen_adherence = sync_wfm_historical_adherence(config, unit_id, users, body)
-        stream_results(gen_adherence, handle_adherence(unit_id), 'historical_adherence', schemas.historical_adherence, ['userId', 'management_unit_id', 'startDate'], first_page)
+        stream_results(gen_adherence, handle_adherence(unit_id), 'historical_adherence', schemas.historical_adherence,
+                       ['userId', 'management_unit_id', 'startDate'], first_page)
 
         sync_date = next_date
         first_page = False
+
 
 def sync_management_units(config):
     logger.info("Fetching management units")
@@ -429,12 +441,14 @@ def sync_management_units(config):
         # don't allow args here
         getter = lambda *args, **kwargs: api_instance.get_managementunits_mu_id_activitycodes(unit_id)
         gen_activitycodes = fetch_all_records(getter, 'activity_codes', FakeBody(), max_pages=1)
-        stream_results(gen_activitycodes, handle_activity_codes(unit_id), 'activity_code', schemas.activity_code, ['id', 'management_unit_id'], first_page)
+        stream_results(gen_activitycodes, handle_activity_codes(unit_id), 'activity_code', schemas.activity_code,
+                       ['id', 'management_unit_id'], first_page)
 
         # don't allow args here
         getter = lambda *args, **kwargs: api_instance.get_managementunits_mu_id_users(unit_id)
         gen_users = fetch_all_records(getter, 'entities', FakeBody(), max_pages=1)
-        users = stream_results(gen_users, handle_mgmt_users(unit_id), 'management_unit_users', schemas.management_unit_users, ['user_id', 'management_unit_id'], first_page)
+        users = stream_results(gen_users, handle_mgmt_users(unit_id), 'management_unit_users',
+                               schemas.management_unit_users, ['user_id', 'management_unit_id'], first_page)
 
         user_ids = [user['user_id'] for user in users]
         sync_user_schedules(config, unit_id, user_ids, first_page)
@@ -467,7 +481,8 @@ def handle_conversation(conversation_record):
 
 def sync_conversations(config):
     logger.info("Fetching conversations")
-    api_instance = PureCloudPlatformApiSdk.ConversationsApi()
+    api_instance = PureCloudPlatformClientV2.ConversationsApi()
+    # api_instance = PureCloudPlatformApiSdk.ConversationsApi()
 
     sync_date = config['start_date']
     end_date = datetime.date.today() + datetime.timedelta(days=1)
@@ -482,13 +497,16 @@ def sync_conversations(config):
             next_date.strftime('%Y-%m-%dT00:00:00.000Z')
         )
 
-        body = PureCloudPlatformApiSdk.ConversationQuery()
+        # body = PureCloudPlatformApiSdk.ConversationQuery()
+        body = PureCloudPlatformClientV2.ConversationQuery()
         body.interval = interval
         body.order = "asc"
         body.orderBy = "conversationStart"
 
-        gen_conversations = fetch_all_analytics_records(api_instance.post_conversations_details_query, body, 'conversations')
-        stream_results(gen_conversations, handle_conversation, 'conversation', schemas.conversation, ['conversation_id'], first_page)
+        gen_conversations = fetch_all_analytics_records(api_instance.post_analytics_conversations_details_query, body,
+                                                        'conversations')
+        stream_results(gen_conversations, handle_conversation, 'conversation', schemas.conversation,
+                       ['conversation_id'], first_page)
 
         sync_date = next_date
         first_page = False
@@ -556,7 +574,8 @@ def handle_user_details(user_details_record):
 
 def sync_user_details(config):
     logger.info("Fetching user details")
-    api_instance = PureCloudPlatformApiSdk.UsersApi()
+    # api_instance = PureCloudPlatformApiSdk.UsersApi()
+    api_instance = PureCloudPlatformClientV2.UsersApi()
 
     sync_date = config['start_date']
     end_date = datetime.date.today() + datetime.timedelta(days=1)
@@ -575,8 +594,9 @@ def sync_user_details(config):
         body.interval = interval
         body.order = "asc"
 
-
-        gen_user_details = fetch_all_analytics_records(api_instance.post_users_details_query, body, 'user_details')
+        # gen_user_details = fetch_all_analytics_records(api_instance.post_users_details_query, body, 'user_details')
+        gen_user_details = fetch_all_analytics_records(api_instance.post_analytics_users_details_query, body,
+                                                       'user_details')
         stream_results_list(gen_user_details, handle_user_details, 'user_state', schemas.user_state, ['id'], first_page)
         sync_date = next_date
 
