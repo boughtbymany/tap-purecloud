@@ -80,6 +80,15 @@ user = {
         'username': {
             'type': 'string',
             'description': 'username for the user',
+        },
+        'division': {
+            'type': ['object', 'null'],
+            'properties': {
+                'id': {
+                    'type': ['null', 'string'],
+                    'description': 'user division'
+                }
+            }
         }
     }
 }
@@ -242,7 +251,6 @@ participant = {
     }
 }
 
-
 conversation = {
     'type': 'object',
     'properties': {
@@ -260,7 +268,10 @@ conversation = {
             'format': 'date-time',
             'description': 'end timestamp for the conversation',
         },
-
+        'division_ids': {
+            'type': ['array', 'null'],
+            'description': 'division ids'
+        },
         'participants': {
             'type': ['array', 'null'],
             'items': participant
@@ -516,8 +527,13 @@ campaign = {
             'description': 'campaign name'
         },
         'division': {
-            'type': 'object',
-            'properties': division
+            'type': ['object', 'null'],
+            'properties': {
+                'id': {
+                    'type': ['null', 'string'],
+                    'description': 'division id for reference'
+                }
+            }
         }
     }
 }
