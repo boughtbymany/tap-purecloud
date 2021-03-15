@@ -511,7 +511,7 @@ def handle_conversation(conversation_record):
                 for metric_record in metrics_iterator:
                     metrics.append(handle_object(metric_record))
             except TypeError as te:
-                logger.info('No metrics found for session')
+                pass
 
             sessions[-1]['segments'] = segments
             sessions[-1]['metrics'] = metrics
