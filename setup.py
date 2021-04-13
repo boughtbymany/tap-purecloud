@@ -13,7 +13,7 @@ setup(name='tap-purecloud',
       install_requires=[
           'singer-python==5.0.12',
           'backoff==1.3.2',
-          'requests==2.20.0',
+          'requests==2.25.1',
           'python-dateutil==2.6.0',
           'PureCloudPlatformClientV2==111.0.0',
           'websockets==5.0.1'
