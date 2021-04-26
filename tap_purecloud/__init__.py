@@ -490,26 +490,98 @@ def handle_campaigns(conversation_record):
     return conversation
 
 
+def handle_object_conversation(record):
+    new_record = handle_object(record)
+
+    conversation = {
+        'conversation_id': new_record['conversation_id'],
+        'conversation_start': new_record['conversation_start'],
+        'conversation_end': new_record['conversation_end'],
+        'division_ids': new_record['division_ids'],
+        'participants': new_record['participants']
+    }
+
+    return conversation
+
+
+def handle_object_participant(record):
+    new_record = handle_object(record)
+
+    participant = {
+        'participant_id': new_record['participant_id'],
+        'participant_name': new_record['participant_name'],
+        'purpose': new_record['purpose'],
+        'sessions': new_record['sessions']
+    }
+
+    return participant
+
+
+def handle_object_session(record):
+    new_record = handle_object(record)
+
+    session = {
+        'session_id': new_record['session_id'],
+        'media_type': new_record['media_type'],
+        'ani': new_record['ani'],
+        'direction': new_record['direction'],
+        'dnis': new_record['dnis'],
+        'outbound_campaign_id': new_record['outbound_campaign_id'],
+        'outbound_contact_id': new_record['outbound_contact_id'],
+        'segments': new_record['segments'],
+        'metrics': new_record['metrics']
+    }
+
+    return session
+
+
+def handle_object_segment(record):
+    new_record = handle_object(record)
+
+    segment = {
+        'queue_id': new_record['queue_id'],
+        'source_session_id': new_record['source_session_id'],
+        'segment_start': new_record['segment_start'],
+        'segment_end': new_record['segment_end'],
+        'wrap_up_code': new_record['wrap_up_code'],
+        'segment_type': new_record['segment_type']
+    }
+
+    return segment
+
+
+def handle_object_metric(record):
+    new_record = handle_object(record)
+
+    metric = {
+        'name': new_record['name'],
+        'value': new_record['value'],
+        'emit_date': new_record['emit_date']
+    }
+
+    return metric
+
+
 def handle_conversation(conversation_record):
-    conversation = handle_object(conversation_record)
+    conversation = handle_object_conversation(conversation_record)
 
     participants = []
     for participant_record in conversation_record.participants:
-        participants.append(handle_object(participant_record))
+        participants.append(handle_object_participant(participant_record))
 
         sessions = []
         for session_record in participant_record.sessions:
-            sessions.append(handle_object(session_record))
+            sessions.append(handle_object_session(session_record))
 
             segments = []
             for segment_record in session_record.segments:
-                segments.append(handle_object(segment_record))
+                segments.append(handle_object_segment(segment_record))
 
             metrics = []
             try:
                 metrics_iterator = iter(session_record.metrics)
                 for metric_record in metrics_iterator:
-                    metrics.append(handle_object(metric_record))
+                    metrics.append(handle_object_metric(metric_record))
             except TypeError as te:
                 pass
 
