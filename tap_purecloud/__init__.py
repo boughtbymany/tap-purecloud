@@ -598,7 +598,8 @@ def sync_conversations(config):
     api_instance = PureCloudPlatformClientV2.ConversationsApi()
 
     sync_date = config['start_date']
-    end_date = datetime.date.today() + datetime.timedelta(days=1)
+    # end_date = datetime.date.today() + datetime.timedelta(days=1)
+    end_date = sync_date + datetime.timedelta(days=1)
     incr = datetime.timedelta(days=1)
 
     first_page = True
