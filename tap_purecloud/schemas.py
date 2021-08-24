@@ -162,6 +162,10 @@ segment = {
         'segment_type': {
             'type': ['string', 'null'],
             'description': 'segment type'
+        },
+        'disconnect_type': {
+            'type': ['string', 'null'],
+            'description': 'disconnect type'
         }
     }
 }
