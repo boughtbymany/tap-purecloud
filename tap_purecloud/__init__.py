@@ -544,7 +544,8 @@ def handle_object_segment(record):
         'segment_start': new_record['segment_start'],
         'segment_end': new_record['segment_end'],
         'wrap_up_code': new_record['wrap_up_code'],
-        'segment_type': new_record['segment_type']
+        'segment_type': new_record['segment_type'],
+        'disconnect_type': new_record['disconnect_type']
     }
 
     return segment
