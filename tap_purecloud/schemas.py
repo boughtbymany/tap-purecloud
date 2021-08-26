@@ -248,9 +248,13 @@ participant = {
             'type': ['string', 'null'],
             'description': 'participant purpose'
         },
-        'sessions': {
+        "sessions": {
             'type': ['array', 'null'],
             'items': session
+        },
+        "user_id": {
+            'type': ['string', 'null'],
+            'description': 'Unique identifier for the user'
         }
     }
 }
