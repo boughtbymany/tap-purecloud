@@ -511,7 +511,8 @@ def handle_object_participant(record):
         'participant_id': new_record['participant_id'],
         'participant_name': new_record['participant_name'],
         'purpose': new_record['purpose'],
-        'sessions': new_record['sessions']
+        'sessions': new_record['sessions'],
+        'user_id': new_record['user_id']
     }
 
     return participant
