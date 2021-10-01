@@ -537,6 +537,31 @@ campaign = {
             'type': ['string', 'null'],
             'description': 'campaign name'
         },
+        'dialing_mode': {
+            'type': ['string', 'null'],
+            'description': 'dialing mode'
+        },
+        'campaign_status': {
+            'type': ['string', 'null'],
+            'description': 'campaign status'
+        },
+        'priority': {
+            'type': ['number', 'null'],
+            'description': 'priority'
+        },
+        'no_answer_timeout': {
+            'type': ['number', 'null'],
+            'description': 'no answer timeout'
+        },
+        'queue': {
+            'type': ['object', 'null'],
+            'properties': {
+                'id': {
+                    'type': ['null', 'string'],
+                    'description': 'queue id for reference'
+                }
+            }
+        }
         'division': {
             'type': ['object', 'null'],
             'properties': {
