@@ -561,7 +561,7 @@ campaign = {
                     'description': 'queue id for reference'
                 }
             }
-        }
+        },
         'division': {
             'type': ['object', 'null'],
             'properties': {
