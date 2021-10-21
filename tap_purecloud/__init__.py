@@ -527,6 +527,7 @@ def handle_object_session(record):
         'ani': new_record['ani'],
         'direction': new_record['direction'],
         'dnis': new_record['dnis'],
+        'recording': new_record.get('recording', False) or False,
         'outbound_campaign_id': new_record['outbound_campaign_id'],
         'outbound_contact_id': new_record['outbound_contact_id'],
         'segments': new_record['segments'],
