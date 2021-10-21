@@ -221,6 +221,10 @@ session = {
             'type': ['string', 'null'],
             'description': 'Outbound contact id',
         },
+        'recording': {
+            'type': ['boolean', 'null'],
+            'description': 'Recording'
+        },
         'segments': {
             'type': ['array', 'null'],
             'items': segment
