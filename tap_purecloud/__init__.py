@@ -498,6 +498,9 @@ def handle_object_conversation(record):
         'conversation_start': new_record['conversation_start'],
         'conversation_end': new_record['conversation_end'],
         'division_ids': new_record['division_ids'],
+        'media_stats_min_conversation_mos': new_record['media_stats_min_conversation_mos'],
+        'media_stats_min_conversation_r_factor': new_record['media_stats_min_conversation_r_factor'],
+        'originating_direction': new_record['originating_direction'],
         'participants': new_record['participants']
     }
 
