@@ -287,6 +287,18 @@ conversation = {
             },
             'description': 'division ids'
         },
+        'media_stats_min_conversation_mos': {
+            'type': ['number', 'null'],
+            'description': 'mediaStatsMinConversationMos'
+        },
+        'media_stats_min_conversation_r_factor': {
+            'type': ['number', 'null'],
+            'description': 'mediaStatsMinConversationRFactor'
+        },
+        'originating_direction': {
+            'type': ['string', 'null'],
+            'description': 'originatingDirection'
+        },
         'participants': {
             'type': ['array', 'null'],
             'items': participant
