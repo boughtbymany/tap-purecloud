@@ -180,6 +180,7 @@ def stream_results(generator, transform_record, record_name, schema, primary_key
             records = [transform_record(k, v) for (k, v) in page.items()]
         else:
             records = [transform_record(record) for record in page]
+
         valid_records = [r for r in records if r is not None]
         singer.write_records(record_name, valid_records)
         all_records.extend(valid_records)
@@ -471,8 +472,13 @@ def sync_management_units(config):
         user_ids = [user['user_id'] for user in users]
         sync_user_schedules(config, unit_id, user_ids, first_page)
 
-        unit_users = get_user_unit_mapping(users)
-        sync_historical_adherence(config, unit_id, unit_users[unit_id], first_page)
+        # 2012-12-14 Mark MacArdle: commenting out as was getting this error:
+        #     You must have at least one of the following permissions assigned:
+        #         [wfm:historicalAdherence:view:20921826-77d0-4da1-a3a7-608e91edc4d1]"
+        # Asked TechOps if permission could be added but it couldn't as we have a Genesys Cloud 2 instead of the 3 licence.
+        # Asked Neal McLaren (intenal customer) how important this was and he said he didn't think it would be useful.
+        # unit_users = get_user_unit_mapping(users)
+        # sync_historical_adherence(config, unit_id, unit_users[unit_id], first_page)
 
 
 def handle_campaigns(conversation_record):
