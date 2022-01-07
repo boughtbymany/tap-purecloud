@@ -1,3 +1,16 @@
+Repo used by Data team to extract data in a Meltano pipeline from Purecloud, the
+telephone system for UK.
+
+Below is original readme of this repo but note it may be out of date. This is a fork
+of [this repo](https://github.com/rumeau/tap-purecloud) from user rumeau. That is
+itself a fork of the [original repo](https://github.com/singer-io/tap-purecloud)
+from Drew Banin.
+
+Forked from the remeau repo to allow bug fixes and controlling the version we use as
+Meltano just pulls the latest version from master.
+
+-----------------
+
 # tap-purecloud
 
 Author: Drew Banin (drew@fishtownanalytics.com)
